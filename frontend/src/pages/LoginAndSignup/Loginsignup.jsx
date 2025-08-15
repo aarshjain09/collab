@@ -130,8 +130,8 @@ const Loginsignup = () => {
 
     const url =
       state === "Login"
-        ? "http://localhost:10000/login"
-        : "http://localhost:10000/signup";
+        ? "https://collab-9aen.vercel.app/login"
+        : "https://collab-9aen.vercel.app/signup";
 
     try {
       const response = await fetch(url, {
