@@ -144,11 +144,9 @@ app.post("/ats", (req, res) => {
 app.get("/ats", (req, res) => {
     res.send("✅ Resume Matcher Backend is running.");
 });
-
-  
-
-
-
+app.get("/", (req, res) => {
+    res.send("✅ Resume Matcher Backend is running.");
+});
 
 app.listen(PORT,() => {
       try {
