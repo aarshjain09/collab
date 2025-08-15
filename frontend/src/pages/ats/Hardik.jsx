@@ -51,7 +51,7 @@ const ResumeATS = () => {
     setError(null);
 
     try {
-      const response = await fetch("https://collab-9aen.vercel.app/api/ats", {
+      const response = await fetch("https://collab-9aen.vercel.app/ats", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ job_description: jobDescription, resume_text: resume }),

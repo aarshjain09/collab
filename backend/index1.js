@@ -148,10 +148,4 @@ app.get("/", (req, res) => {
     res.send("✅ Resume Matcher Backend is running.");
 });
 
-app.listen(PORT,() => {
-      try {
-            console.log(`Connected to database at PORT : ${PORT}`)
-      } catch (err) {
-            console.error(`Error connecting to database, Error : ${err}`)
-      }
-})
+module.exports = app;

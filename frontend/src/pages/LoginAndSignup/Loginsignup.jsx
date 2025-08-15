@@ -24,8 +24,8 @@ const Loginsignup = () => {
 
     const url =
       state === "Login"
-        ? "https://collab-9aen.vercel.app/api/login"
-        : "https://collab-9aen.vercel.app/api/signup";
+        ? "https://collab-9aen.vercel.app/login"
+        : "https://collab-9aen.vercel.app/signup";
 
     try {
       const response = await fetch(url, {
