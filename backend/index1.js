@@ -10,6 +10,8 @@ const { request } = require("http");
 const { error } = require("console");
 const fs = require("fs");
 const Papa = require("papaparse");
+const http = require("http");
+const { Server } = require("socket.io");
 
 app.use(express.json()); //response will auto pass thorugh json
 app.use(cors()); //react will connect using on the prot
@@ -147,6 +149,66 @@ app.get("/ats", (req, res) => {
 });
 app.get("/", (req, res) => {
     res.send("✅ Resume Matcher Backend is running.");
+});
+const server = http.createServer(app);
+const io = new Server(server, {
+    cors: {
+        origin: "https://collab-jade-five.vercel.app/chatroom", // Allow frontend
+        methods: ["GET", "POST"]
+    }
+});
+const RoomSchema = new mongoose.Schema({ name: String });
+const Room = mongoose.model("Room", RoomSchema);
+
+// Message Schema
+const MessageSchema = new mongoose.Schema({
+    room: String,
+    sender: String,
+    text: String,
+    timestamp: { type: Date, default: Date.now }
+});
+const Message = mongoose.model("Message", MessageSchema);
+
+io.on("connection", async (socket) => {
+    console.log("User connected:", socket.id);
+
+    // Send available chat rooms from MongoDB
+    const rooms = await Room.find();
+    socket.emit("roomList", rooms.map(room => room.name));
+
+    // Create a chat room (store in MongoDB)
+    socket.on("createRoom", async (roomName) => {
+        const existingRoom = await Room.findOne({ name: roomName });
+        if (!existingRoom) {
+            await new Room({ name: roomName }).save();
+            io.emit("roomList", (await Room.find()).map(room => room.name)); // Update for all users
+        }
+    });
+
+    // Join a room
+    socket.on("joinRoom", async (room) => {
+        socket.join(room);
+        socket.emit("message", { sender: "System", text: `You joined ${room}`, timestamp: new Date() });
+
+        // Fetch and send chat history from MongoDB
+        const chatHistory = await Message.find({ room }).sort({ timestamp: 1 });
+        socket.emit("chatHistory", chatHistory);
+    });
+
+    // Send a message
+    socket.on("chatMessage", async ({ room, message }) => {
+        const msg = { sender: socket.id, text: message, timestamp: new Date() };
+
+        // Emit immediately
+        io.to(room).emit("message", msg);
+
+        // Save to MongoDB
+        await new Message({ room, sender: socket.id, text: message }).save();
+    });
+
+    socket.on("disconnect", () => {
+        console.log("User disconnected:", socket.id);
+    });
 });
 
 module.exports = app;
