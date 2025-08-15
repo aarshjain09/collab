@@ -153,7 +153,7 @@ app.get("/", (req, res) => {
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
-        origin: "https://collab-jade-five.vercel.app/chatroom", // Allow frontend
+        origin: "https://collab-jade-five.vercel.app/", // Allow frontend
         methods: ["GET", "POST"]
     }
 });
@@ -212,3 +212,6 @@ io.on("connection", async (socket) => {
 });
 
 module.exports = app;
+server.listen(PORT, () => {
+    console.log(`✅ Server running on port ${PORT}`);
+});
