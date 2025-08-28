@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-const API_BASE = "collab-7wqr.vercel.app"; 
+const API_BASE = "https://collab-45ta.vercel.app"; 
 
 const Chatbot = () => {
   const [categories, setCategories] = useState([]);
@@ -14,7 +14,7 @@ const Chatbot = () => {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    axios.get(`collab-7wqr.vercel.app/categories`)
+    axios.get(`https://collab-45ta.vercel.app/categories`)
       .then(res => {
         setCategories(res.data.categories || []);
         setError("");
