@@ -1,13 +1,14 @@
 from flask import Flask, request, jsonify
 import os, csv, random, requests
-from dotenv import load_dotenv
 from flask_cors import CORS
 
 app = Flask(__name__)
 CORS(app)
 
-load_dotenv()
-
+# =========================
+# Environment Variables
+# =========================
+# Vercel injects these automatically (set them in Dashboard → Settings → Environment Variables)
 groq_api_key = os.getenv("GROQ_API_KEY")
 hf_api_key = os.getenv("HF_API_KEY")
 
@@ -61,6 +62,10 @@ def compute_similarity(user_input, correct_answer):
 # =========================
 # Routes
 # =========================
+@app.route("/")
+def home():
+    return "✅ Flask API is live on Vercel!"
+
 @app.route("/categories", methods=["GET"])
 def get_categories():
     return jsonify({"categories": categories})
@@ -84,7 +89,7 @@ def get_question():
             return jsonify({
                 "question_idx": idx,
                 "question": q["question"],
-                "answer": q["answer"],  # ⚠ remove in prod
+                "answer": q["answer"],  # ⚠ remove in production
                 "category": category
             })
 
@@ -99,11 +104,10 @@ def evaluate_answer():
         return jsonify({"error": err}), 500
 
     feedback = generate_response(user_input, correct_answer)
-
     return jsonify({"similarity": sim, "feedback": feedback})
 
 # =========================
-# Main
+# Expose app for Vercel
 # =========================
-if __name__ == "__main__":
-    app.run(debug=True)
+# DO NOT use app.run() on Vercel
+app = app
